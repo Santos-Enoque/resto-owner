@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_app_course_resto/helpers/screen_navigation.dart';
 import 'package:food_app_course_resto/helpers/style.dart';
 import 'package:food_app_course_resto/models/restaurant.dart';
 import 'package:food_app_course_resto/widgets/custom_text.dart';
@@ -6,6 +7,8 @@ import 'package:food_app_course_resto/widgets/loading.dart';
 import 'package:food_app_course_resto/widgets/small_floating_button.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
+
+import 'add_product.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key key}) : super(key: key);
@@ -274,6 +277,12 @@ class DashboardScreen extends StatelessWidget {
 //              )
         ],
       )),
+      floatingActionButton: FloatingActionButton(onPressed: (){
+        changeScreen(context, AddProductScreen());
+      },
+      child: Icon(Icons.add),
+      backgroundColor: primary,
+      tooltip: 'Add Product',),
     );
   }
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:food_app_course_resto/helpers/screen_navigation.dart';
 import 'package:food_app_course_resto/helpers/style.dart';
 import 'package:food_app_course_resto/providers/user.dart';
+import 'package:food_app_course_resto/screens/dashboard.dart';
 import 'package:food_app_course_resto/widgets/custom_text.dart';
 import 'package:food_app_course_resto/widgets/loading.dart';
 import 'package:provider/provider.dart';
@@ -27,7 +28,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     return Scaffold(
       key: _key,
       backgroundColor: white,
-      body: SingleChildScrollView(
+      body: authProvider.status == Status.Authenticating? Loading() : SingleChildScrollView(
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -57,8 +58,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     controller: authProvider.name,
                     decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Username",
-                        icon: Icon(Icons.person)
+                        hintText: "Restaurant name",
+                        icon: Icon(Icons.restaurant)
                     ),
                   ),),
               ),
@@ -124,7 +125,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
 //                  restaurantProvider.loadSingleRestaurant();
 //                  productProvider.loadProducts();
                   authProvider.clearController();
-//                  changeScreenReplacement(context, Home());
+                  changeScreenReplacement(context, DashboardScreen());
                 },
                 child: Container(
                   decoration: BoxDecoration(

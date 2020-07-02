@@ -4,8 +4,11 @@ import 'package:food_app_course_resto/helpers/style.dart';
 import 'package:food_app_course_resto/providers/user.dart';
 import 'package:food_app_course_resto/screens/registration.dart';
 import 'package:food_app_course_resto/widgets/custom_text.dart';
+import 'package:food_app_course_resto/widgets/loading.dart';
 
 import 'package:provider/provider.dart';
+
+import 'dashboard.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -25,7 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       key: _key,
       backgroundColor: white,
-      body: SingleChildScrollView(
+      body:authProvider.status == Status.Authenticating? Loading() : SingleChildScrollView(
         child: Column(
           children: <Widget>[
             SizedBox(
@@ -93,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
 //                  restaurantProvider.loadSingleRestaurant();
 //                  productProvider.loadProducts();
                   authProvider.clearController();
-//                  changeScreenReplacement(context, Home());
+                  changeScreenReplacement(context, DashboardScreen());
                 },
                 child: Container(
                   decoration: BoxDecoration(
