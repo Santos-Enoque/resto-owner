@@ -17,7 +17,7 @@ class ProductModel {
 
   String _id;
   String _name;
-  int _restaurantId;
+  String _restaurantId;
   String _restaurant;
   String _category;
   String _image;
@@ -35,7 +35,7 @@ class ProductModel {
 
   String get restaurant => _restaurant;
 
-  int get restaurantId => _restaurantId;
+  String get restaurantId => _restaurantId;
 
   String get category => _category;
 
@@ -64,7 +64,7 @@ class ProductModel {
     _description = snapshot.data[DESCRIPTION];
     _id = snapshot.data[ID];
     _featured = snapshot.data[FEATURED];
-    _price = snapshot.data[PRICE];
+    _price = snapshot.data[PRICE].floor();
     _category = snapshot.data[CATEGORY];
     _rating = snapshot.data[RATING];
     _rates = snapshot.data[RATES];

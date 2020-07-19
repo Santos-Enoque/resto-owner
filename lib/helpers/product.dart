@@ -5,6 +5,21 @@ class ProductServices {
   String collection = "products";
   Firestore _firestore = Firestore.instance;
 
+  Future createProduct({Map data})async{
+    _firestore.collection(collection).document(data['id']).setData({
+      "id": data['id'],
+      "name": data['name'],
+      "image": data['image'],
+      "rates": data['rates'],
+      "rating": data['rating'],
+      "price": data['price'],
+      "restaurant": data['restaurant'],
+      "restaurantId": data['restaurantId'],
+      "description": data['description'],
+      "featured": data['featured'],
+    });
+  }
+
   Future<List<ProductModel>> getProducts() async =>
       _firestore.collection(collection).getDocuments().then((result) {
         List<ProductModel> products = [];
@@ -30,6 +45,12 @@ class ProductServices {
         for (DocumentSnapshot product in result.documents) {
           products.add(ProductModel.fromSnapshot(product));
         }
+        print("PRODUCTS: ${products.length}");
+        print("PRODUCTS: ${products.length}");
+        print("PRODUCTS: ${products.length}");
+        print("PRODUCTS: ${products.length}");
+        print("PRODUCTS: ${products.length}");
+
         return products;
       });
 

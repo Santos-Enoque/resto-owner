@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:food_app_course_resto/providers/app.dart';
+import 'package:food_app_course_resto/providers/category.dart';
+import 'package:food_app_course_resto/providers/product.dart';
 import 'package:food_app_course_resto/providers/user.dart';
 import 'package:food_app_course_resto/screens/dashboard.dart';
 import 'package:food_app_course_resto/screens/login.dart';
@@ -9,11 +12,11 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(
       providers: [
-//        ChangeNotifierProvider.value(value: AppProvider()),
+        ChangeNotifierProvider.value(value: AppProvider()),
         ChangeNotifierProvider.value(value: UserProvider.initialize()),
-//        ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
+        ChangeNotifierProvider.value(value: CategoryProvider.initialize()),
 //        ChangeNotifierProvider.value(value: RestaurantProvider.initialize()),
-//        ChangeNotifierProvider.value(value: ProductProvider.initialize()),
+        ChangeNotifierProvider.value(value: ProductProvider.initialize()),
       ],
       child: MaterialApp(
           debugShowCheckedModeBanner: false,

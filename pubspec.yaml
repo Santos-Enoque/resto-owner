@@ -31,6 +31,9 @@ dependencies:
   flutter_spinkit: ^4.1.2
   flutter_typeahead: ^1.8.1
   uuid: ^2.0.4
+  firebase_storage: ^3.1.6
+  file_picker: ^1.12.0
+  image_picker: ^0.6.7+3
 #  stripe_payment: ^1.0.7
 
 dev_dependencies:

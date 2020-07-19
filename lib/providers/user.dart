@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_app_course_resto/helpers/order.dart';
+import 'package:food_app_course_resto/helpers/product.dart';
 import 'package:food_app_course_resto/helpers/restaurant.dart';
 import 'package:food_app_course_resto/models/order.dart';
+import 'package:food_app_course_resto/models/product.dart';
 import 'package:food_app_course_resto/models/restaurant.dart';
 import 'package:uuid/uuid.dart';
 
@@ -19,7 +21,11 @@ class UserProvider with ChangeNotifier{
   Firestore _firestore = Firestore.instance;
   OrderServices _orderServices = OrderServices();
   RestaurantServices _restaurantServices = RestaurantServices();
+  ProductServices _productServices = ProductServices();
+
   RestaurantModel _restaurant;
+  List<ProductModel> products = <ProductModel>[];
+
 
 //  getter
   Status get status => _status;
@@ -107,6 +113,7 @@ class UserProvider with ChangeNotifier{
     }else{
       _user = firebaseUser;
       _status = Status.Authenticated;
+      await loadProductsByRestaurant(restaurantId: user.uid);
       _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
     }
     notifyListeners();
@@ -129,5 +136,10 @@ class UserProvider with ChangeNotifier{
       return false;
     }
 
+  }
+
+  Future loadProductsByRestaurant({String restaurantId})async{
+    products = await _productServices.getProductsByRestaurant(id: restaurantId);
+    notifyListeners();
   }
 }

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:food_app_course_resto/helpers/screen_navigation.dart';
 import 'package:food_app_course_resto/helpers/style.dart';
 import 'package:food_app_course_resto/models/restaurant.dart';
+import 'package:food_app_course_resto/providers/product.dart';
+import 'package:food_app_course_resto/providers/user.dart';
 import 'package:food_app_course_resto/widgets/custom_text.dart';
 import 'package:food_app_course_resto/widgets/loading.dart';
+import 'package:food_app_course_resto/widgets/product.dart';
 import 'package:food_app_course_resto/widgets/small_floating_button.dart';
 import 'package:provider/provider.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -15,7 +18,9 @@ class DashboardScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-//    final productProvider = Provider.of<ProductProvider>(context);
+    final productProvider = Provider.of<ProductProvider>(context);
+    final userProvider = Provider.of<UserProvider>(context);
+
     bool hasImage = false;
 
     return Scaffold(
@@ -49,6 +54,12 @@ class DashboardScreen extends StatelessWidget {
               onTap: () {},
               leading: Icon(Icons.home),
               title: CustomText(text: "Home"),
+            ),
+
+            ListTile(
+              onTap: () {},
+              leading: Icon(Icons.restaurant),
+              title: CustomText(text: "My restaurant"),
             ),
           ],
         ),
@@ -122,32 +133,6 @@ class DashboardScreen extends StatelessWidget {
                         weight: FontWeight.w300,
                       ))),
 
-              // close button
-              Positioned.fill(
-                  top: 5,
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4),
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(20),
-                                color: black.withOpacity(0.3)),
-                            child: FlatButton.icon(
-                                onPressed: () {},
-                                icon: Icon(
-                                  Icons.edit,
-                                  color: white,
-                                ),
-                                label: CustomText(
-                                  text: "Edit",
-                                  color: white,
-                                ))),
-                      ),
-                    ),
-                  )),
 
               Positioned.fill(
                   bottom: 2,
@@ -259,22 +244,22 @@ class DashboardScreen extends StatelessWidget {
                     )),
               ),
             ),
-          )
+          ),
 
 
           // products
-//              Column(
-//                children: productProvider.productsByRestaurant
-//                    .map((item) => GestureDetector(
-//                  onTap: () {
+              Column(
+                children: userProvider.products
+                    .map((item) => GestureDetector(
+                  onTap: () {
 //                    changeScreen(context, Details(product: item,));
-//                  },
-//                  child: ProductWidget(
-//                    product: item,
-//                  ),
-//                ))
-//                    .toList(),
-//              )
+                  },
+                  child: ProductWidget(
+                    product: item,
+                  ),
+                ))
+                    .toList(),
+              )
         ],
       )),
       floatingActionButton: FloatingActionButton(onPressed: (){
