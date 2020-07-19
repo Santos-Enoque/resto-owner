@@ -57,29 +57,6 @@ class ProductWidget extends StatelessWidget {
                           text: product.name,
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.all(8),
-                        child: Container(
-                          decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.circular(20),
-                              color: white,
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.grey[300],
-                                    offset: Offset(1, 1),
-                                    blurRadius: 4),
-                              ]),
-                          child: Padding(
-                            padding: const EdgeInsets.all(4.0),
-                            child: Icon(
-                              Icons.favorite_border,
-                              color: red,
-                              size: 18,
-                            ),
-                          ),
-                        ),
-                      )
                     ],
                   ),
 
@@ -110,6 +87,19 @@ class ProductWidget extends StatelessWidget {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
+
+                          Padding(
+                            padding: const EdgeInsets.all(2),
+                            child: Icon(
+                              Icons.star,
+                              color: red,
+                              size: 20,
+                            ),
+                          ),
+
+                          SizedBox(
+                            width: 2,
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0),
                             child: CustomText(
@@ -118,29 +108,7 @@ class ProductWidget extends StatelessWidget {
                               size: 14.0,
                             ),
                           ),
-                          SizedBox(
-                            width: 2,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: red,
-                            size: 16,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: red,
-                            size: 16,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: red,
-                            size: 16,
-                          ),
-                          Icon(
-                            Icons.star,
-                            color: grey,
-                            size: 16,
-                          ),
+
                         ],
                       ),
                       Padding(

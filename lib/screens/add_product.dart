@@ -283,6 +283,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       duration: const Duration(seconds: 10),
                     ));
                     userProvider.loadProductsByRestaurant(restaurantId: userProvider.restaurant.id);
+                    await userProvider.reload();
                     appProvider.changeLoading();
                   },
                   child: CustomText(

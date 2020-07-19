@@ -4,6 +4,9 @@ import 'package:food_app_course_resto/helpers/style.dart';
 import 'package:food_app_course_resto/models/restaurant.dart';
 import 'package:food_app_course_resto/providers/product.dart';
 import 'package:food_app_course_resto/providers/user.dart';
+import 'package:food_app_course_resto/screens/login.dart';
+import 'package:food_app_course_resto/screens/orders.dart';
+import 'package:food_app_course_resto/screens/products.dart';
 import 'package:food_app_course_resto/widgets/custom_text.dart';
 import 'package:food_app_course_resto/widgets/loading.dart';
 import 'package:food_app_course_resto/widgets/product.dart';
@@ -29,7 +32,7 @@ class DashboardScreen extends StatelessWidget {
         elevation: 0.5,
         backgroundColor: primary,
         title: CustomText(
-          text: "Sales: \$12.99",
+          text: "Sales: \$${userProvider.totalSales}",
           color: white,
         ),
         actions: <Widget>[],
@@ -40,13 +43,13 @@ class DashboardScreen extends StatelessWidget {
             UserAccountsDrawerHeader(
               decoration: BoxDecoration(color: primary),
               accountName: CustomText(
-                text: "Santos Corner",
+                text: userProvider.restaurant?.name ?? "",
                 color: white,
                 weight: FontWeight.bold,
                 size: 18,
               ),
               accountEmail: CustomText(
-                text: "admin@admin.com",
+                text: userProvider.user.email ?? "",
                 color: white,
               ),
             ),
@@ -60,6 +63,31 @@ class DashboardScreen extends StatelessWidget {
               onTap: () {},
               leading: Icon(Icons.restaurant),
               title: CustomText(text: "My restaurant"),
+            ),
+
+            ListTile(
+              onTap: () {
+                changeScreen(context, OrdersScreen());
+              },
+              leading: Icon(Icons.bookmark_border),
+              title: CustomText(text: "Orders"),
+            ),
+
+            ListTile(
+              onTap: () {
+                changeScreen(context, ProductsScreen());
+              },
+              leading: Icon(Icons.fastfood),
+              title: CustomText(text: "Products"),
+            ),
+
+            ListTile(
+              onTap: () {
+                userProvider.signOut();
+                changeScreenReplacement(context, LoginScreen());
+              },
+              leading: Icon(Icons.exit_to_app),
+              title: CustomText(text: "Log out"),
             ),
           ],
         ),
@@ -114,7 +142,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text: 'Santos Corner',
+                        text: userProvider?.restaurant?.name ?? "",
                         color: white,
                         size: 24,
                         weight: FontWeight.normal,
@@ -127,7 +155,7 @@ class DashboardScreen extends StatelessWidget {
                   child: Align(
                       alignment: Alignment.bottomLeft,
                       child: CustomText(
-                        text: "Average Price: \$5.5",
+                        text: "Average Price: \$ ${userProvider.avgPrice}",
                         color: white,
                         size: 16,
                         weight: FontWeight.w300,
@@ -156,7 +184,7 @@ class DashboardScreen extends StatelessWidget {
                                 size: 20,
                               ),
                             ),
-                            Text("4.5"),
+                            Text("${userProvider.restaurantRating}"),
                           ],
                         ),
                       ),
@@ -197,6 +225,9 @@ class DashboardScreen extends StatelessWidget {
                           blurRadius: 5),
                     ]),
                 child: ListTile(
+                  onTap: (){
+                    changeScreen(context, OrdersScreen());
+                  },
                     leading: Padding(
                       padding: const EdgeInsets.all(4),
                       child: Image.asset("images/delivery.png"),
@@ -206,7 +237,7 @@ class DashboardScreen extends StatelessWidget {
                       size: 24,
                     ),
                     trailing: CustomText(
-                      text: "30",
+                      text: userProvider.orders.length.toString(),
                       size: 24,
                       weight: FontWeight.bold,
                     )),
@@ -229,16 +260,19 @@ class DashboardScreen extends StatelessWidget {
                           blurRadius: 5),
                     ]),
                 child: ListTile(
+                  onTap: (){
+                    changeScreen(context, ProductsScreen());
+                  },
                     leading: Padding(
                       padding: const EdgeInsets.all(4),
                       child: Image.asset("images/fd.png"),
                     ),
                     title: CustomText(
-                      text: "Total Food",
+                      text: "Products",
                       size: 24,
                     ),
                     trailing: CustomText(
-                      text: "30",
+                      text: userProvider.products.length.toString(),
                       size: 24,
                       weight: FontWeight.bold,
                     )),

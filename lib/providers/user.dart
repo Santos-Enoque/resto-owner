@@ -6,15 +6,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_app_course_resto/helpers/order.dart';
 import 'package:food_app_course_resto/helpers/product.dart';
 import 'package:food_app_course_resto/helpers/restaurant.dart';
+import 'package:food_app_course_resto/models/cart_item.dart';
 import 'package:food_app_course_resto/models/order.dart';
 import 'package:food_app_course_resto/models/product.dart';
 import 'package:food_app_course_resto/models/restaurant.dart';
 import 'package:uuid/uuid.dart';
 
+enum Status { Uninitialized, Authenticated, Authenticating, Unauthenticated }
 
-enum Status{Uninitialized, Authenticated, Authenticating, Unauthenticated}
-
-class UserProvider with ChangeNotifier{
+class UserProvider with ChangeNotifier {
   FirebaseAuth _auth;
   FirebaseUser _user;
   Status _status = Status.Uninitialized;
@@ -22,15 +22,26 @@ class UserProvider with ChangeNotifier{
   OrderServices _orderServices = OrderServices();
   RestaurantServices _restaurantServices = RestaurantServices();
   ProductServices _productServices = ProductServices();
+  double _totalSales = 0;
+  double _avgPrice = 0;
+  double _restaurantRating = 0;
+
 
   RestaurantModel _restaurant;
   List<ProductModel> products = <ProductModel>[];
-
+  List<CartItemModel> cartItems = [];
 
 //  getter
   Status get status => _status;
+
   FirebaseUser get user => _user;
+
   RestaurantModel get restaurant => _restaurant;
+
+  double get totalSales => _totalSales;
+  double get avgPrice => _avgPrice;
+  double get restaurantRating => _restaurantRating;
+
 
   // public variables
   List<OrderModel> orders = [];
@@ -41,18 +52,18 @@ class UserProvider with ChangeNotifier{
   TextEditingController password = TextEditingController();
   TextEditingController name = TextEditingController();
 
-
-  UserProvider.initialize(): _auth = FirebaseAuth.instance{
+  UserProvider.initialize() : _auth = FirebaseAuth.instance {
     _auth.onAuthStateChanged.listen(_onStateChanged);
   }
 
-  Future<bool> signIn()async{
-    try{
+  Future<bool> signIn() async {
+    try {
       _status = Status.Authenticating;
       notifyListeners();
-      await _auth.signInWithEmailAndPassword(email: email.text.trim(), password: password.text.trim());
+      await _auth.signInWithEmailAndPassword(
+          email: email.text.trim(), password: password.text.trim());
       return true;
-    }catch(e){
+    } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
       print(e.toString());
@@ -60,27 +71,27 @@ class UserProvider with ChangeNotifier{
     }
   }
 
-
-  Future<bool> signUp()async{
-    try{
+  Future<bool> signUp() async {
+    try {
       _status = Status.Authenticating;
       notifyListeners();
-      await _auth.createUserWithEmailAndPassword(email: email.text.trim(), password: password.text.trim()).then((result){
+      await _auth
+          .createUserWithEmailAndPassword(
+              email: email.text.trim(), password: password.text.trim())
+          .then((result) {
         _firestore.collection('restaurants').document(result.user.uid).setData({
-          'name':name.text,
-          'email':email.text,
-          'id':result.user.uid,
+          'name': name.text,
+          'email': email.text,
+          'id': result.user.uid,
           "avgPrice": 0.0,
           "image": "",
-          "popular":false,
+          "popular": false,
           "rates": 0,
           "rating": 0.0,
-
-
         });
       });
       return true;
-    }catch(e){
+    } catch (e) {
       _status = Status.Unauthenticated;
       notifyListeners();
       print(e.toString());
@@ -88,57 +99,93 @@ class UserProvider with ChangeNotifier{
     }
   }
 
-  Future signOut()async{
+  Future signOut() async {
     _auth.signOut();
     _status = Status.Unauthenticated;
     notifyListeners();
     return Future.delayed(Duration.zero);
   }
 
-  void clearController(){
+  void clearController() {
     name.text = "";
     password.text = "";
     email.text = "";
   }
 
-  Future<void> reload()async{
+  Future<void> reload() async {
     _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
+    await loadProductsByRestaurant(restaurantId: user.uid);
+    await getOrders();
+    await getTotalSales();
+    await getAvgPrice();
     notifyListeners();
   }
 
-
-  Future<void> _onStateChanged(FirebaseUser firebaseUser) async{
-    if(firebaseUser == null){
+  Future<void> _onStateChanged(FirebaseUser firebaseUser) async {
+    if (firebaseUser == null) {
       _status = Status.Unauthenticated;
-    }else{
+    } else {
       _user = firebaseUser;
       _status = Status.Authenticated;
       await loadProductsByRestaurant(restaurantId: user.uid);
+      await getOrders();
+      await getTotalSales();
+      await getAvgPrice();
       _restaurant = await _restaurantServices.getRestaurantById(id: user.uid);
     }
     notifyListeners();
   }
 
-
-  getOrders()async{
-    orders = await _orderServices.getUserOrders(userId: _user.uid);
+  getOrders() async {
+    orders = await _orderServices.restaurantOrders(restaurantId: _user.uid);
     notifyListeners();
   }
 
-  Future<bool> removeFromCart({Map cartItem})async{
+  getTotalSales() async {
+    for (OrderModel order in orders) {
+      for (CartItemModel item in order.cart) {
+        if (item.restaurantId == user.uid) {
+          _totalSales = _totalSales + item.totalRestaurantSale;
+          cartItems.add(item);
+        }
+      }
+    }
+    _totalSales = _totalSales / 100;
+    notifyListeners();
+  }
+
+  getAvgPrice()async{
+    if(products.length != 0){
+      int amountSum = 0;
+      for(ProductModel product in products){
+        amountSum = product.price;
+      }
+      _avgPrice = (amountSum / products.length) / 100;
+    }
+    notifyListeners();
+  }
+
+  getRating(){
+    if(_restaurant.rates != 0){
+      _restaurantRating = restaurant.rating / restaurant.rates;
+    }
+  }
+
+
+
+  Future<bool> removeFromCart({Map cartItem}) async {
     print("THE PRODUC IS: ${cartItem.toString()}");
 
-    try{
+    try {
 //      _userServicse.removeFromCart(userId: _user.uid, cartItem: cartItem);
       return true;
-    }catch(e){
+    } catch (e) {
       print("THE ERROR ${e.toString()}");
       return false;
     }
-
   }
 
-  Future loadProductsByRestaurant({String restaurantId})async{
+  Future loadProductsByRestaurant({String restaurantId}) async {
     products = await _productServices.getProductsByRestaurant(id: restaurantId);
     notifyListeners();
   }

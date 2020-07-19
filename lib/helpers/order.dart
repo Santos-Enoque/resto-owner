@@ -17,16 +17,23 @@ class OrderServices{
     });
   }
 
-  Future<List<OrderModel>> getUserOrders({String userId}) async =>
+  Future<List<OrderModel>> restaurantOrders({String restaurantId}) async =>
       _firestore
           .collection(collection)
-          .where("userId", isEqualTo: userId)
+          .where("restaurantIds", arrayContains: restaurantId)
           .getDocuments()
           .then((result) {
         List<OrderModel> orders = [];
         for (DocumentSnapshot order in result.documents) {
           orders.add(OrderModel.fromSnapshot(order));
         }
+        print("NUMBER OF ORDERS: " + orders.length.toString());
+        print("NUMBER OF ORDERS: " + orders.length.toString());
+        print("NUMBER OF ORDERS: " + orders.length.toString());
+        print("NUMBER OF ORDERS: " + orders.length.toString());
+        print("NUMBER OF ORDERS: " + orders.length.toString());
+        print("NUMBER OF ORDERS: " + orders.length.toString());
+
         return orders;
       });
 
